@@ -6,667 +6,263 @@
 <title>VŌLATILITY — Options Anomaly Scanner</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 <style>
-/* ─────────────────────────────────────────────────────────────
-   VŌLATILITY — Premium UI Rework (Institutional × Modern SaaS)
-   Keeps your existing IDs / pages / JS flow intact. :contentReference[oaicite:1]{index=1}
-   Adds: Dark/Light theme, improved hierarchy, better spacing, better tables.
-───────────────────────────────────────────────────────────── */
-
-/* ── RESET ───────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:13.5px}
-body{min-height:100vh;overflow-x:hidden;font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+body{min-height:100vh;overflow-x:hidden;font-family:"DM Sans",system-ui,-apple-system,sans-serif}
 button,input,select{font:inherit}
 a{color:inherit;text-decoration:none}
-:focus{outline:none}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.ico{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.ico svg{display:block}
 
-/* ─────────────────────────────────────────────────────────
-   THEME TOKENS
-   - Default: dark
-   - Light: body[data-theme="light"]
-───────────────────────────────────────────────────────── */
 :root{
-  --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
-  /* radii / shadows */
-  --radius:14px;
-  --radius-sm:10px;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
-  --shadow-soft: 0 8px 22px rgba(0,0,0,.22);
-
-  /* dark palette */
-  --bg-0:#0b0d14;
-  --bg-1:#0f1220;
-  --bg-2:#12162a;
-  --bg-3:#171c34;
-  --bg-4:#1b2140;
-
-  --border:#232a45;
-  --border-hi:#2f385c;
-
-  --text-0:#eef1ff;
-  --text-1:#b9c0dd;
-  --text-2:#7b83a8;
-  --text-3:#596082;
-
-  --accent:#4f8cff;
-  --accent-soft: rgba(79,140,255,.14);
-
-  --green:#1fe6a8;
-  --green-soft: rgba(31,230,168,.12);
-
-  --red:#ff4d6d;
-  --red-soft: rgba(255,77,109,.12);
-
-  --amber:#ffbf3c;
-  --amber-soft: rgba(255,191,60,.12);
-
-  --cyan:#4de1ff;
-  --cyan-soft: rgba(77,225,255,.12);
-
-  /* table */
-  --row-hover: rgba(255,255,255,.03);
-
-  /* chart */
-  --chart-grid: rgba(130,140,190,.16);
-  --chart-tick: var(--text-2);
-
-  /* layout */
-  --sidebar-w: 260px;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  --radius:12px;--radius-sm:8px;
+  --shadow:0 1px 3px rgba(0,0,0,.12),0 6px 24px rgba(0,0,0,.18);
+  --shadow-soft:0 1px 2px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.10);
+  --bg-0:#0a0c11;--bg-1:#0e1017;--bg-2:#13151e;--bg-3:#181b26;--bg-4:#1e2230;
+  --border:#1f2535;--border-hi:#2a3148;
+  --text-0:#e2e4ed;--text-1:#a3a8be;--text-2:#6b7190;--text-3:#4a5068;
+  --accent:#6889c4;--accent-soft:rgba(104,137,196,.10);--accent-strong:rgba(104,137,196,.20);
+  --green:#4faa86;--green-soft:rgba(79,170,134,.08);--green-text:#5fbf96;
+  --red:#c9545d;--red-soft:rgba(201,84,93,.08);--red-text:#d66a72;
+  --amber:#c49a4e;--amber-soft:rgba(196,154,78,.08);--amber-text:#d4aa5c;
+  --cyan:#5a9ab5;--cyan-soft:rgba(90,154,181,.08);
+  --row-hover:rgba(255,255,255,.02);--chart-grid:rgba(100,110,150,.10);--chart-tick:var(--text-2);
+  --sidebar-w:252px;
 }
-
-/* LIGHT THEME */
 body[data-theme="light"]{
-  --bg-0:#f5f7ff;
-  --bg-1:#ffffff;
-  --bg-2:#fbfcff;
-  --bg-3:#f3f5ff;
-  --bg-4:#eef2ff;
-
-  --border:#e1e6f6;
-  --border-hi:#cfd7f2;
-
-  --text-0:#101428;
-  --text-1:#2a3358;
-  --text-2:#5b6386;
-  --text-3:#7a81a3;
-
-  --accent:#2f6bff;
-  --accent-soft: rgba(47,107,255,.12);
-
-  --row-hover: rgba(16,20,40,.03);
-
-  --chart-grid: rgba(70,85,135,.12);
-  --chart-tick: var(--text-2);
-
-  --shadow: 0 12px 28px rgba(20,24,50,.10);
-  --shadow-soft: 0 10px 22px rgba(20,24,50,.08);
+  --bg-0:#f4f5f9;--bg-1:#ffffff;--bg-2:#fafbfe;--bg-3:#f1f2f8;--bg-4:#eaecf5;
+  --border:#dfe2ee;--border-hi:#cdd1e2;
+  --text-0:#111424;--text-1:#343a54;--text-2:#5f6580;--text-3:#848a9e;
+  --accent:#4a6fa5;--accent-soft:rgba(74,111,165,.08);--accent-strong:rgba(74,111,165,.14);
+  --green:#3d8f6f;--green-soft:rgba(61,143,111,.06);--green-text:#3d8f6f;
+  --red:#b5444d;--red-soft:rgba(181,68,77,.06);--red-text:#b5444d;
+  --amber:#a67f3d;--amber-soft:rgba(166,127,61,.06);--amber-text:#a67f3d;
+  --cyan:#4a849c;--cyan-soft:rgba(74,132,156,.06);
+  --row-hover:rgba(0,0,0,.02);--chart-grid:rgba(70,80,120,.08);
+  --shadow:0 1px 3px rgba(0,0,0,.05),0 6px 24px rgba(0,0,0,.06);
+  --shadow-soft:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
 }
-
-body{
-  background: radial-gradient(1200px 700px at 20% -10%, rgba(79,140,255,.18), transparent 60%),
-              radial-gradient(900px 500px at 90% 10%, rgba(255,191,60,.10), transparent 55%),
-              linear-gradient(180deg,var(--bg-0),var(--bg-1));
-  color:var(--text-0);
-}
-
-/* ── SCROLLBAR ─────────────────────────────────────────── */
-::-webkit-scrollbar{width:8px;height:8px}
+body{background:var(--bg-0);color:var(--text-0)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:radial-gradient(ellipse 900px 500px at 15% -5%,rgba(104,137,196,.07),transparent 60%),radial-gradient(ellipse 600px 400px at 85% 8%,rgba(196,154,78,.04),transparent 50%);}
+body[data-theme="light"]::before{
+  background:radial-gradient(ellipse 900px 500px at 15% -5%,rgba(74,111,165,.05),transparent 60%),radial-gradient(ellipse 600px 400px at 85% 8%,rgba(166,127,61,.03),transparent 50%);}
+::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(120,130,180,.30);border-radius:999px}
-body[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(55,65,120,.22)}
+::-webkit-scrollbar-thumb{background:rgba(100,110,150,.20);border-radius:999px}
 
-/* ─────────────────────────────────────────────────────────
-   LAYOUT
-───────────────────────────────────────────────────────── */
 .shell{display:flex;flex-direction:column;height:100vh}
-header{
-  position:sticky;top:0;z-index:50;
-  background: color-mix(in srgb, var(--bg-1) 82%, transparent);
-  backdrop-filter: blur(10px);
-  border-bottom:1px solid var(--border);
-  padding:12px 18px;
-  display:flex;align-items:center;gap:14px;
-}
-.logo{
-  font-weight:700;
-  letter-spacing:3.5px;
-  text-transform:uppercase;
-  font-size:1.05rem;
-  color:var(--text-0);
-  display:flex;align-items:baseline;gap:10px;
-}
-.logo .mark{
-  color:var(--accent);
-  text-shadow: 0 0 14px rgba(79,140,255,.22);
-}
-.logo span{
-  color:var(--text-2);
-  font-weight:500;
-  font-size:.78rem;
-  letter-spacing:.6px;
-  text-transform:none;
-}
+header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg-1) 85%,transparent);backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;gap:16px}
+.logo{font-weight:700;letter-spacing:2.5px;text-transform:uppercase;font-size:.95rem;color:var(--text-0);display:flex;align-items:baseline;gap:10px;user-select:none}
+.logo .mark{color:var(--accent)}
+.logo span{color:var(--text-3);font-weight:500;font-size:.74rem;letter-spacing:.4px;text-transform:none}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.clock{font-family:var(--mono);font-size:.8rem;color:var(--text-2);font-variant-numeric:tabular-nums;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-2)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px color-mix(in srgb,var(--green) 50%,transparent)}
+.status-dot.offline{background:var(--red);box-shadow:0 0 6px color-mix(in srgb,var(--red) 50%,transparent)}
 
-.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.clock{
-  font-family:var(--mono);
-  font-size:.85rem;
-  color:var(--text-2);
-  font-variant-numeric:tabular-nums;
-  padding:7px 10px;border-radius:999px;
-  border:1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-2) 70%, transparent);
-}
-.status-dot{
-  width:9px;height:9px;border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 10px color-mix(in srgb, var(--green) 70%, transparent);
-  border:1px solid color-mix(in srgb, var(--green) 35%, var(--border));
-}
-.status-dot.offline{
-  background:var(--red);
-  box-shadow:0 0 10px color-mix(in srgb, var(--red) 70%, transparent);
-  border-color: color-mix(in srgb, var(--red) 35%, var(--border));
-}
+.theme-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg-2);color:var(--text-2);cursor:pointer;display:grid;place-items:center;transition:.15s ease;margin-left:2px}
+.theme-btn:hover{border-color:var(--border-hi);background:var(--bg-3);color:var(--text-1)}
+.theme-btn .ico-sun{display:none}.theme-btn .ico-moon{display:flex}
+body[data-theme="light"] .theme-btn .ico-sun{display:flex}
+body[data-theme="light"] .theme-btn .ico-moon{display:none}
 
-/* Theme toggle */
-.theme-toggle{
-  display:flex;align-items:center;gap:10px;margin-left:6px;
-  padding:6px 10px;border-radius:999px;
-  border:1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-2) 70%, transparent);
-}
-.theme-toggle .label{color:var(--text-2);font-size:.78rem}
-.switch{
-  width:44px;height:24px;border-radius:999px;border:1px solid var(--border-hi);
-  background: color-mix(in srgb, var(--bg-3) 70%, transparent);
-  position:relative;cursor:pointer;transition:.18s ease;
-}
-.switch::after{
-  content:"";position:absolute;top:2px;left:2px;
-  width:20px;height:20px;border-radius:50%;
-  background: linear-gradient(180deg,#fff, #dfe6ff);
-  box-shadow:0 6px 14px rgba(0,0,0,.25);
-  transition:.18s ease;
-}
-body[data-theme="light"] .switch{
-  background: color-mix(in srgb, var(--accent) 14%, var(--bg-3));
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--border-hi));
-}
-body[data-theme="light"] .switch::after{
-  transform:translateX(20px);
-  background: linear-gradient(180deg,#ffffff,#f2f5ff);
-}
-
-/* main */
 .main{display:flex;flex:1;min-height:0}
-.sidebar{
-  width:var(--sidebar-w);
-  background: color-mix(in srgb, var(--bg-1) 92%, transparent);
-  border-right:1px solid var(--border);
-  padding:16px 14px 14px;
-  display:flex;flex-direction:column;gap:10px;
-  min-height:0;
-}
-.content{
-  flex:1;
-  padding:18px 18px 20px;
-  min-height:0;
-  overflow:auto;
-}
+.sidebar{width:var(--sidebar-w);background:var(--bg-1);border-right:1px solid var(--border);padding:16px 12px 12px;display:flex;flex-direction:column;gap:2px;min-height:0;overflow-y:auto}
+.content{flex:1;padding:20px 24px 28px;min-height:0;overflow:auto}
 
-/* ─────────────────────────────────────────────────────────
-   SIDEBAR NAV
-───────────────────────────────────────────────────────── */
-.nav-section{
-  color:var(--text-3);
-  font-size:.70rem;
-  letter-spacing:1.4px;
-  text-transform:uppercase;
-  padding:10px 10px 6px;
-}
-.nav-btn{
-  width:100%;
-  display:flex;align-items:center;gap:10px;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid transparent;
-  background:transparent;
-  color:var(--text-1);
-  cursor:pointer;
-  transition:.14s ease;
-}
-.nav-btn .icon{
-  width:26px;height:26px;border-radius:10px;
-  display:grid;place-items:center;
-  background: color-mix(in srgb, var(--bg-3) 70%, transparent);
-  border:1px solid var(--border);
-  color:var(--text-2);
-  font-family:var(--mono);
-  font-size:.85rem;
-}
-.nav-btn:hover{
-  background: color-mix(in srgb, var(--bg-3) 65%, transparent);
-  border-color: var(--border);
-}
-.nav-btn.active{
-  background: color-mix(in srgb, var(--accent) 12%, var(--bg-2));
-  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
-  color:var(--text-0);
-}
-.nav-btn.active .icon{
-  background: color-mix(in srgb, var(--accent) 14%, var(--bg-3));
-  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
-  color:var(--accent);
-}
-
+.nav-section{color:var(--text-3);font-size:.68rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;padding:14px 10px 6px}
+.nav-section:first-child{padding-top:4px}
+.nav-btn{width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);border:1px solid transparent;background:transparent;color:var(--text-1);cursor:pointer;font-size:.9rem;transition:.12s ease}
+.nav-btn .nav-icon{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2);flex-shrink:0}
+.nav-btn:hover{background:var(--bg-3);border-color:var(--border)}
+.nav-btn.active{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 18%,var(--border));color:var(--text-0)}
+.nav-btn.active .nav-icon{background:var(--accent-strong);border-color:color-mix(in srgb,var(--accent) 25%,var(--border));color:var(--accent)}
 .nav-spacer{flex:1}
-.nav-bottom{display:flex;flex-direction:column;gap:10px;padding:8px 6px 4px}
+.nav-bottom{display:flex;flex-direction:column;gap:6px;padding:12px 0 4px;border-top:1px solid var(--border);margin-top:8px}
 
-/* ─────────────────────────────────────────────────────────
-   BUTTONS / FIELDS
-───────────────────────────────────────────────────────── */
-.btn-action{
-  width:100%;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  padding:10px 12px;border-radius:12px;
-  border:1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-2) 70%, transparent);
-  color:var(--text-0);
-  cursor:pointer;
-  transition:.14s ease;
-}
-.btn-action:hover{
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
-  background: color-mix(in srgb, var(--accent) 10%, var(--bg-2));
-}
-.btn-action:disabled{opacity:.6;cursor:not-allowed}
-.btn-action span{font-family:var(--mono);color:var(--accent)}
-.field{
-  padding:9px 10px;border-radius:12px;
-  border:1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-2) 75%, transparent);
-  color:var(--text-0);
-  font-family:var(--mono);
-}
-.field::placeholder{color:color-mix(in srgb, var(--text-2) 78%, transparent)}
-.field:focus{
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-  box-shadow:0 0 0 3px var(--accent-soft);
-}
+.btn-action{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-2);color:var(--text-1);font-size:.85rem;cursor:pointer;transition:.12s ease}
+.btn-action:hover{border-color:var(--border-hi);background:var(--bg-3);color:var(--text-0)}
+.btn-action:disabled{opacity:.5;cursor:not-allowed}
+.btn-action .ico{color:var(--text-2)}
+.btn-primary{background:var(--accent-strong);border-color:color-mix(in srgb,var(--accent) 30%,var(--border));color:var(--accent);font-weight:600}
+.btn-primary:hover{background:color-mix(in srgb,var(--accent) 18%,var(--bg-2));border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
+.btn-primary .ico{color:var(--accent)}
 
-/* ─────────────────────────────────────────────────────────
-   TOOLBAR / PAGES
-───────────────────────────────────────────────────────── */
-.page{display:none;min-height:0}
-.page.active{display:block}
-.toolbar{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  padding:12px 14px;margin-bottom:12px;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  background: color-mix(in srgb, var(--bg-1) 88%, transparent);
-  box-shadow: var(--shadow-soft);
-}
-.toolbar label{
-  color:var(--text-3);
-  font-size:.70rem;
-  text-transform:uppercase;
-  letter-spacing:1.2px;
-}
+.field{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-2);color:var(--text-0);font-family:var(--mono);font-size:.85rem;transition:.15s ease}
+.field::placeholder{color:var(--text-3)}
+.field:focus{border-color:color-mix(in srgb,var(--accent) 40%,var(--border));box-shadow:0 0 0 3px var(--accent-soft)}
 
-/* ─────────────────────────────────────────────────────────
-   CARDS
-───────────────────────────────────────────────────────── */
-.card{
-  background: color-mix(in srgb, var(--bg-1) 92%, transparent);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  box-shadow: var(--shadow);
-}
-.card-header{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:12px 14px;
-  border-bottom:1px solid var(--border);
-  color:var(--text-1);
-  font-size:.82rem;
-  letter-spacing:.3px;
-}
-.card-header span:first-child{
-  color:var(--text-0);
-  font-weight:600;
-}
-.card-body{padding:14px}
-.badge{
-  font-family:var(--mono);
-  font-size:.78rem;
-  padding:5px 10px;border-radius:999px;
-  background: color-mix(in srgb, var(--bg-3) 70%, transparent);
-  border:1px solid var(--border);
-  color:var(--text-2);
-}
+.page{display:none;min-height:0}.page.active{display:block}
+.toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 14px;margin-bottom:16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-1)}
+.toolbar label{color:var(--text-3);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.toolbar .sep{width:1px;height:24px;background:var(--border);margin:0 8px;flex-shrink:0}
 
-/* ─────────────────────────────────────────────────────────
-   TABLES
-───────────────────────────────────────────────────────── */
+.card{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-soft)}
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);color:var(--text-1);font-size:.82rem}
+.card-header span:first-child{color:var(--text-0);font-weight:600;font-size:.88rem}
+.card-body{padding:16px 18px}
+.badge{font-family:var(--mono);font-size:.74rem;padding:4px 10px;border-radius:6px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-2)}
+
 .tbl-wrap{overflow:auto}
-table{width:100%;border-collapse:separate;border-spacing:0;font-family:var(--mono);font-size:.86rem}
-thead th{
-  position:sticky;top:0;z-index:2;
-  background: color-mix(in srgb, var(--bg-2) 90%, transparent);
-  border-bottom:1px solid var(--border);
-  color:var(--text-3);
-  font-size:.68rem;
-  text-transform:uppercase;
-  letter-spacing:1.3px;
-  padding:10px 10px;
-}
-tbody td{
-  border-bottom:1px solid color-mix(in srgb, var(--border) 60%, transparent);
-  padding:10px 10px;
-  color:var(--text-1);
-}
+table{width:100%;border-collapse:separate;border-spacing:0;font-family:var(--mono);font-size:.84rem}
+thead th{position:sticky;top:0;z-index:2;background:var(--bg-2);border-bottom:1px solid var(--border);color:var(--text-3);font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;padding:10px 10px;white-space:nowrap}
+thead th.col-group{font-size:.7rem;letter-spacing:1.5px;color:var(--text-2);text-align:center;padding:8px 10px 4px;border-bottom:none}
+thead th.col-group-call{background:var(--green-soft)}
+thead th.col-group-put{background:var(--red-soft)}
+thead th.col-group-strike{background:var(--bg-3)}
+tbody td{border-bottom:1px solid color-mix(in srgb,var(--border) 50%,transparent);padding:9px 10px;color:var(--text-1)}
 tbody tr:hover td{background:var(--row-hover)}
 .num{text-align:right;font-variant-numeric:tabular-nums}
-.ticker-cell{
-  color:var(--accent);
-  cursor:pointer;
-  font-weight:600;
-}
-.pos{color:var(--green)}
-.neg{color:var(--red)}
-
-/* Score bar (keeps your HTML from JS) */
-.scorebar{
-  display:flex;align-items:center;gap:10px;
-}
-.score-track{
-  flex:1;height:7px;border-radius:999px;
-  background: color-mix(in srgb, var(--bg-4) 60%, transparent);
-  border:1px solid color-mix(in srgb, var(--border) 55%, transparent);
-  overflow:hidden;
-}
+.ticker-cell{color:var(--accent);cursor:pointer;font-weight:600}
+.ticker-cell:hover{text-decoration:underline;text-underline-offset:2px}
+.pos{color:var(--green-text)}.neg{color:var(--red-text)}
+.scorebar{display:flex;align-items:center;gap:8px}
+.score-track{flex:1;height:5px;border-radius:999px;background:var(--bg-4);overflow:hidden}
 .score-fill{height:100%;border-radius:999px}
-.score-num{
-  width:40px;text-align:right;color:var(--text-2);
-  font-family:var(--mono);font-size:.80rem;
-}
+.score-num{width:32px;text-align:right;color:var(--text-2);font-family:var(--mono);font-size:.78rem}
 
-/* ─────────────────────────────────────────────────────────
-   DETAIL STATS GRID
-───────────────────────────────────────────────────────── */
-.detail-top{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
-  margin-bottom:14px;
-}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;color:var(--text-3);text-align:center;gap:8px}
+.empty-state .empty-icon{opacity:.3;margin-bottom:4px;color:var(--text-2)}
+.empty-state .empty-title{font-size:.9rem;font-weight:600;color:var(--text-2)}
+.empty-state .empty-sub{font-size:.8rem;color:var(--text-3)}
+
+.detail-top{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
 @media(max-width:1100px){.detail-top{grid-template-columns:repeat(2,1fr)}}
-.stat-box{
-  border:1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-2) 72%, transparent);
-  border-radius:var(--radius);
-  padding:14px 14px 12px;
-}
-.stat-label{
-  color:var(--text-3);
-  font-size:.70rem;
-  text-transform:uppercase;
-  letter-spacing:1.2px;
-  margin-bottom:8px;
-}
-.stat-value{
-  font-family:var(--mono);
-  font-size:1.45rem;
-  color:var(--text-0);
-  font-variant-numeric:tabular-nums;
-}
-.stat-sub{margin-top:5px;color:var(--text-2);font-size:.78rem}
+.stat-box{border:1px solid var(--border);background:var(--bg-1);border-radius:var(--radius);padding:16px 16px 14px;box-shadow:var(--shadow-soft);transition:.15s ease}
+.stat-box:hover{border-color:var(--border-hi)}
+.stat-label{color:var(--text-3);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.stat-value{font-family:var(--mono);font-size:1.35rem;color:var(--text-0);font-variant-numeric:tabular-nums;font-weight:500}
+.stat-sub{margin-top:4px;color:var(--text-2);font-size:.76rem}
 
-/* ─────────────────────────────────────────────────────────
-   CHART CONTAINERS
-───────────────────────────────────────────────────────── */
 .split-h{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:980px){.split-h{grid-template-columns:1fr}.sidebar{display:none}}
-.chart-box{
-  height:260px;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  background: color-mix(in srgb, var(--bg-2) 70%, transparent);
-  padding:10px;
-}
+.chart-box{min-height:260px;height:260px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-2);padding:10px}
 canvas{width:100%!important;height:100%!important}
 
-/* ─────────────────────────────────────────────────────────
-   HEATMAP
-───────────────────────────────────────────────────────── */
-.heatmap-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(86px, 1fr));
-  gap:10px;
-  padding:10px 6px 4px;
-}
-.hm-cell{
-  border-radius:14px;
-  border:1px solid color-mix(in srgb, var(--border) 65%, transparent);
-  padding:12px 10px;
-  cursor:pointer;
-  transition:.12s ease;
-  box-shadow: 0 8px 18px rgba(0,0,0,.12);
-}
-.hm-cell:hover{transform:translateY(-2px);border-color:color-mix(in srgb, var(--accent) 30%, var(--border))}
-.hm-ticker{font-family:var(--mono);font-weight:700;font-size:.90rem}
-.hm-score{margin-top:6px;font-family:var(--mono);color:var(--text-2);font-size:.82rem}
+.heatmap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;padding:8px 4px 4px}
+.hm-cell{border-radius:var(--radius-sm);border:1px solid color-mix(in srgb,var(--border) 50%,transparent);padding:12px 10px;cursor:pointer;transition:.12s ease}
+.hm-cell:hover{transform:translateY(-1px);border-color:var(--border-hi);box-shadow:var(--shadow-soft)}
+.hm-ticker{font-family:var(--mono);font-weight:600;font-size:.88rem}
+.hm-score{margin-top:4px;font-family:var(--mono);color:var(--text-2);font-size:.78rem}
+.heatmap-legend{display:flex;align-items:center;gap:12px;margin-top:14px;justify-content:center;flex-wrap:wrap}
+.heatmap-legend span{font-size:.72rem;color:var(--text-3)}
+.heatmap-legend .swatch{display:flex;gap:2px;align-items:center}
+.heatmap-legend .swatch div{width:28px;height:8px;border-radius:3px}
 
-/* ─────────────────────────────────────────────────────────
-   CHAIN GRID STYLES
-───────────────────────────────────────────────────────── */
-.chain-call-bg{background: color-mix(in srgb, var(--green) 12%, transparent)}
-.chain-put-bg{background: color-mix(in srgb, var(--red) 10%, transparent)}
-.chain-strike-col{
-  background: color-mix(in srgb, var(--bg-3) 75%, transparent);
-  font-weight:800;
-  text-align:center;
-  color: var(--amber);
-}
-.atm-row td{
-  border-top:1px solid color-mix(in srgb, var(--amber) 70%, transparent)!important;
-  border-bottom:1px solid color-mix(in srgb, var(--amber) 70%, transparent)!important;
-}
+.chain-call-bg{background:var(--green-soft)}.chain-put-bg{background:var(--red-soft)}
+.chain-strike-col{background:var(--bg-3);font-weight:700;text-align:center;color:var(--amber-text)}
+.atm-row td{border-top:1px solid color-mix(in srgb,var(--amber) 40%,transparent)!important;border-bottom:1px solid color-mix(in srgb,var(--amber) 40%,transparent)!important}
 
-/* ─────────────────────────────────────────────────────────
-   LOADING / TOASTS
-───────────────────────────────────────────────────────── */
-.spinner{
-  display:inline-block;width:14px;height:14px;
-  border:2px solid color-mix(in srgb, var(--border-hi) 70%, transparent);
-  border-top-color: var(--accent);
-  border-radius:50%;
-  animation:spin .6s linear infinite;
-}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border-hi);border-top-color:var(--accent);border-radius:50%;animation:spin .65s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-overlay{
-  position:absolute;inset:0;
-  background: color-mix(in srgb, var(--bg-0) 88%, transparent);
-  backdrop-filter: blur(6px);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:10px;
-  z-index:10;border-radius:var(--radius);
-}
-.loading-overlay .spinner{width:28px;height:28px;border-width:3px}
-.loading-text{color:var(--text-2);font-size:.86rem}
+.loading-overlay{position:absolute;inset:0;background:color-mix(in srgb,var(--bg-0) 85%,transparent);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:10;border-radius:var(--radius)}
+.loading-overlay .spinner{width:24px;height:24px;border-width:2.5px}
+.loading-text{color:var(--text-2);font-size:.84rem}
 
-.toast-container{
-  position:fixed;bottom:20px;right:20px;z-index:999;
-  display:flex;flex-direction:column;gap:8px;
-}
-.toast{
-  background: color-mix(in srgb, var(--bg-2) 90%, transparent);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:10px 14px;
-  font-size:.86rem;
-  color:var(--text-0);
-  box-shadow: var(--shadow-soft);
-  animation:slideIn .22s ease;
-  min-width:220px;
-}
-.toast.error{border-color: color-mix(in srgb, var(--red) 45%, var(--border)); color: var(--red)}
-.toast.success{border-color: color-mix(in srgb, var(--green) 45%, var(--border)); color: var(--green)}
-.toast.info{border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); color: var(--text-0)}
-@keyframes slideIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast-container{position:fixed;top:64px;right:20px;z-index:999;display:flex;flex-direction:column;gap:6px}
+.toast{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:.84rem;color:var(--text-0);box-shadow:var(--shadow);animation:toastIn .2s ease;min-width:200px;max-width:360px}
+.toast.error{border-color:color-mix(in srgb,var(--red) 35%,var(--border));color:var(--red-text)}
+.toast.success{border-color:color-mix(in srgb,var(--green) 35%,var(--border));color:var(--green-text)}
+.toast.info{border-color:color-mix(in srgb,var(--accent) 25%,var(--border));color:var(--text-0)}
+@keyframes toastIn{from{transform:translateY(-8px);opacity:0}to{transform:translateY(0);opacity:1}}
 </style>
 </head>
-
 <body>
 <div class="shell">
-
-<!-- ═══ HEADER ═══════════════════════════════════════════ -->
 <header>
   <div class="logo"><span class="mark">VŌLATILITY</span><span>Options Anomaly Scanner</span></div>
   <div class="header-right">
     <div class="clock" id="clock"></div>
     <div class="status-dot" id="statusDot" title="API Status"></div>
-
-    <div class="theme-toggle" title="Toggle light/dark">
-      <div class="label">Theme</div>
-      <div class="switch" id="themeSwitch" role="button" tabindex="0" aria-label="Toggle theme"></div>
-    </div>
+    <button class="theme-btn" id="themeSwitch" title="Toggle theme" aria-label="Toggle theme">
+      <span class="ico ico-moon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+      <span class="ico ico-sun"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+    </button>
   </div>
 </header>
-
 <div class="main">
-<!-- ═══ SIDEBAR ════════════════════════════════════════════ -->
 <aside class="sidebar">
   <div class="nav-section">Scanner</div>
   <button class="nav-btn active" data-page="scanner" onclick="showPage('scanner')">
-    <span class="icon">◉</span>Ranking
+    <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Ranking
   </button>
   <button class="nav-btn" data-page="heatmap" onclick="showPage('heatmap')">
-    <span class="icon">▦</span>Heatmap
+    <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Heatmap
   </button>
-
   <div class="nav-section">Analysis</div>
   <button class="nav-btn" data-page="detail" onclick="showPage('detail')">
-    <span class="icon">◈</span>Ticker Detail
+    <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span>Ticker Detail
   </button>
   <button class="nav-btn" data-page="chain" onclick="showPage('chain')">
-    <span class="icon">⊞</span>Options Chain
+    <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>Options Chain
   </button>
-
   <div class="nav-spacer"></div>
   <div class="nav-bottom">
     <button class="btn-action" id="btnRefreshUniverse" onclick="refreshUniverse()">
-      <span>↻</span> Refresh S&amp;P 500
+      <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span>Refresh S&amp;P 500
     </button>
     <button class="btn-action" id="btnBackfill" onclick="backfillRV()">
-      <span>▶</span> Backfill RV
+      <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg></span>Backfill RV
     </button>
-    <button class="btn-action" id="btnScan" onclick="runScan()">
-      <span>⚡</span> Run Full Scan
+    <button class="btn-action btn-primary" id="btnScan" onclick="runScan()">
+      <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>Run Full Scan
     </button>
   </div>
 </aside>
-
-<!-- ═══ CONTENT ════════════════════════════════════════════ -->
 <div class="content">
 
-<!-- ── PAGE: SCANNER (Ranking Table) ──────────────────── -->
 <div class="page active" id="page-scanner">
   <div class="toolbar">
     <label>RV Window</label>
-    <select class="field" id="scanWindow" style="width:80px">
-      <option value="20">20d</option>
-      <option value="30" selected>30d</option>
-      <option value="60">60d</option>
-    </select>
+    <select class="field" id="scanWindow" style="width:80px"><option value="20">20d</option><option value="30" selected>30d</option><option value="60">60d</option></select>
+    <div class="sep"></div>
     <label>Top</label>
-    <select class="field" id="scanTop" style="width:80px">
-      <option value="25">25</option>
-      <option value="50" selected>50</option>
-      <option value="100">100</option>
-    </select>
+    <select class="field" id="scanTop" style="width:80px"><option value="25">25</option><option value="50" selected>50</option><option value="100">100</option></select>
+    <div class="sep"></div>
     <label>Show</label>
-    <select class="field" id="scanFilter" style="width:150px">
-      <option value="all">All</option>
-      <option value="overpriced">IV &gt; RV (Sells)</option>
-      <option value="underpriced">IV &lt; RV (Buys)</option>
-    </select>
-    <button class="btn-action" style="width:auto;margin:0;padding:9px 12px" onclick="runScan()"><span>⚡</span> Scan</button>
-    <span id="scanStatus" style="color:var(--text-2);font-size:.85rem"></span>
+    <select class="field" id="scanFilter" style="width:150px"><option value="all">All</option><option value="overpriced">IV &gt; RV (Sells)</option><option value="underpriced">IV &lt; RV (Buys)</option></select>
+    <div class="sep"></div>
+    <button class="btn-action btn-primary" style="width:auto;margin:0;padding:7px 14px" onclick="runScan()">
+      <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>Scan</button>
+    <span id="scanStatus" style="color:var(--text-2);font-size:.82rem;margin-left:4px"></span>
   </div>
-
   <div class="card" style="flex:1;display:flex;flex-direction:column;position:relative">
-    <div class="card-header">
-      <span>IV vs Realized Vol — Anomaly Ranking</span>
-      <span class="badge" id="scanCount">0 results</span>
-    </div>
+    <div class="card-header"><span>IV vs Realized Vol — Anomaly Ranking</span><span class="badge" id="scanCount">0 results</span></div>
     <div class="tbl-wrap" style="flex:1" id="scanTableWrap">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:30px">#</th>
-            <th>Ticker</th>
-            <th class="num">Spot</th>
-            <th class="num">ATM IV</th>
-            <th class="num">RV (30d)</th>
-            <th class="num">IV − RV</th>
-            <th style="width:180px">Score</th>
-            <th>Expiry</th>
-            <th class="num">ATM Strike</th>
-            <th>Signal</th>
-          </tr>
-        </thead>
-        <tbody id="scanBody"></tbody>
+      <table><thead><tr><th style="width:30px">#</th><th>Ticker</th><th class="num">Spot</th><th class="num">ATM IV</th><th class="num">RV (30d)</th><th class="num">IV − RV</th><th style="width:180px">Score</th><th>Expiry</th><th class="num">ATM Strike</th><th>Signal</th></tr></thead>
+        <tbody id="scanBody"><tr><td colspan="10"><div class="empty-state"><div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="empty-title">No scan data yet</div><div class="empty-sub">Click "Run Full Scan" or "Scan" to analyze S&amp;P 500 options</div></div></td></tr></tbody>
       </table>
     </div>
-    <div class="loading-overlay" id="scanLoading" style="display:none">
-      <div class="spinner"></div>
-      <div class="loading-text">Scanning S&amp;P 500…</div>
-    </div>
+    <div class="loading-overlay" id="scanLoading" style="display:none"><div class="spinner"></div><div class="loading-text">Scanning S&amp;P 500…</div></div>
   </div>
 </div>
 
-<!-- ── PAGE: HEATMAP ──────────────────────────────────── -->
 <div class="page" id="page-heatmap">
   <div class="card" style="flex:1;display:flex;flex-direction:column">
-    <div class="card-header">
-      <span>IV-RV Gap Heatmap</span>
-      <span class="badge" id="hmCount">0</span>
-    </div>
+    <div class="card-header"><span>IV-RV Gap Heatmap</span><span class="badge" id="hmCount">0</span></div>
     <div class="card-body" style="flex:1;overflow:auto">
-      <div class="heatmap-grid" id="heatmapGrid"></div>
-      <div style="display:flex;align-items:center;gap:16px;margin-top:12px;justify-content:center;flex-wrap:wrap">
-        <span style="font-size:.75rem;color:var(--text-2)">IV ≪ RV (Cheap)</span>
-        <div style="display:flex;gap:4px;align-items:center">
-          <div style="width:34px;height:10px;background:#0d47a1;border-radius:4px"></div>
-          <div style="width:34px;height:10px;background:#1a237e;border-radius:4px"></div>
-          <div style="width:34px;height:10px;background:#1c1f2e;border-radius:4px"></div>
-          <div style="width:34px;height:10px;background:#4e342e;border-radius:4px"></div>
-          <div style="width:34px;height:10px;background:#bf360c;border-radius:4px"></div>
-        </div>
-        <span style="font-size:.75rem;color:var(--text-2)">IV ≫ RV (Expensive)</span>
-      </div>
+      <div class="heatmap-grid" id="heatmapGrid"><div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div><div class="empty-title">No heatmap data</div><div class="empty-sub">Run a scan first to populate the heatmap</div></div></div>
+      <div class="heatmap-legend"><span>IV ≪ RV (Cheap)</span><div class="swatch"><div style="background:#2d4a6e"></div><div style="background:#2a3455"></div><div style="background:#1e2230"></div><div style="background:#3d3025"></div><div style="background:#6b3a30"></div></div><span>IV ≫ RV (Expensive)</span></div>
     </div>
   </div>
 </div>
 
-<!-- ── PAGE: TICKER DETAIL ────────────────────────────── -->
 <div class="page" id="page-detail">
   <div class="toolbar">
     <label>Ticker</label>
-    <input class="field" id="detailTicker" value="AAPL" style="width:110px;text-transform:uppercase"
-      onkeydown="if(event.key==='Enter')loadDetail()"/>
-    <button class="btn-action" style="width:auto;margin:0;padding:9px 12px" onclick="loadDetail()"><span>◈</span> Load</button>
-    <span id="detailStatus" style="color:var(--text-2);font-size:.85rem"></span>
+    <input class="field" id="detailTicker" value="AAPL" style="width:110px;text-transform:uppercase" onkeydown="if(event.key==='Enter')loadDetail()"/>
+    <div class="sep"></div>
+    <button class="btn-action btn-primary" style="width:auto;margin:0;padding:7px 14px" onclick="loadDetail()"><span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span>Load</button>
+    <span id="detailStatus" style="color:var(--text-2);font-size:.82rem;margin-left:4px"></span>
   </div>
-
   <div class="detail-top" id="detailStats">
     <div class="stat-box"><div class="stat-label">Spot Price</div><div class="stat-value" id="dSpot">—</div></div>
     <div class="stat-box"><div class="stat-label">ATM IV</div><div class="stat-value" id="dIV">—</div><div class="stat-sub" id="dExpiry"></div></div>
@@ -674,702 +270,108 @@ canvas{width:100%!important;height:100%!important}
     <div class="stat-box"><div class="stat-label">IV − RV Gap</div><div class="stat-value" id="dGap">—</div></div>
     <div class="stat-box"><div class="stat-label">Anomaly Score</div><div class="stat-value" id="dScore">—</div><div class="stat-sub" id="dSignal">—</div></div>
   </div>
-
   <div class="split-h">
-    <div class="card">
-      <div class="card-header"><span>IV vs RV Comparison</span></div>
-      <div class="card-body"><div class="chart-box"><canvas id="chartIvRv"></canvas></div></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><span>Price History (Close)</span></div>
-      <div class="card-body"><div class="chart-box"><canvas id="chartPrice"></canvas></div></div>
-    </div>
+    <div class="card"><div class="card-header"><span>IV vs RV Comparison</span></div><div class="card-body"><div class="chart-box"><canvas id="chartIvRv"></canvas></div></div></div>
+    <div class="card"><div class="card-header"><span>Price History (Close)</span></div><div class="card-body"><div class="chart-box"><canvas id="chartPrice"></canvas></div></div></div>
   </div>
 </div>
 
-<!-- ── PAGE: OPTIONS CHAIN ────────────────────────────── -->
 <div class="page" id="page-chain">
   <div class="toolbar">
     <label>Ticker</label>
-    <input class="field" id="chainTicker" value="AAPL" style="width:110px;text-transform:uppercase"
-      onkeydown="if(event.key==='Enter')loadChainView()"/>
+    <input class="field" id="chainTicker" value="AAPL" style="width:110px;text-transform:uppercase" onkeydown="if(event.key==='Enter')loadChainView()"/>
+    <div class="sep"></div>
     <label>ATM ±</label>
-    <select class="field" id="chainRange" style="width:84px">
-      <option value="0.10">10%</option>
-      <option value="0.15">15%</option>
-      <option value="0.20" selected>20%</option>
-      <option value="0.30">30%</option>
-    </select>
+    <select class="field" id="chainRange" style="width:84px"><option value="0.10">10%</option><option value="0.15">15%</option><option value="0.20" selected>20%</option><option value="0.30">30%</option></select>
+    <div class="sep"></div>
     <label>Max Quotes</label>
-    <select class="field" id="chainMax" style="width:80px">
-      <option value="30">30</option>
-      <option value="50" selected>50</option>
-      <option value="80">80</option>
-    </select>
-    <button class="btn-action" style="width:auto;margin:0;padding:9px 12px" onclick="loadChainView()"><span>⊞</span> Load Chain</button>
-    <span id="chainStatus" style="color:var(--text-2);font-size:.85rem"></span>
+    <select class="field" id="chainMax" style="width:80px"><option value="30">30</option><option value="50" selected>50</option><option value="80">80</option></select>
+    <div class="sep"></div>
+    <button class="btn-action btn-primary" style="width:auto;margin:0;padding:7px 14px" onclick="loadChainView()"><span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>Load Chain</button>
+    <span id="chainStatus" style="color:var(--text-2);font-size:.82rem;margin-left:4px"></span>
   </div>
-
   <div class="card" style="flex:1;display:flex;flex-direction:column;position:relative">
-    <div class="card-header">
-      <span>Options Chain Grid</span>
-      <span class="badge" id="chainMeta"></span>
-    </div>
+    <div class="card-header"><span>Options Chain Grid</span><span class="badge" id="chainMeta"></span></div>
     <div class="tbl-wrap" style="flex:1">
-      <table>
-        <thead>
-          <tr>
-            <th class="num chain-call-bg">Bid</th>
-            <th class="num chain-call-bg">Mid</th>
-            <th class="num chain-call-bg">Ask</th>
-            <th class="num chain-call-bg">IV</th>
-            <th class="num chain-call-bg">Δ</th>
-            <th class="chain-strike-col" style="text-align:center">Strike</th>
-            <th class="num chain-put-bg">Δ</th>
-            <th class="num chain-put-bg">IV</th>
-            <th class="num chain-put-bg">Bid</th>
-            <th class="num chain-put-bg">Mid</th>
-            <th class="num chain-put-bg">Ask</th>
-          </tr>
-        </thead>
-        <tbody id="chainBody"></tbody>
-      </table>
+      <table><thead>
+        <tr><th colspan="5" class="col-group col-group-call">CALLS</th><th class="col-group col-group-strike"></th><th colspan="5" class="col-group col-group-put">PUTS</th></tr>
+        <tr><th class="num chain-call-bg">Bid</th><th class="num chain-call-bg">Mid</th><th class="num chain-call-bg">Ask</th><th class="num chain-call-bg">IV</th><th class="num chain-call-bg">Δ</th><th class="chain-strike-col" style="text-align:center">Strike</th><th class="num chain-put-bg">Δ</th><th class="num chain-put-bg">IV</th><th class="num chain-put-bg">Bid</th><th class="num chain-put-bg">Mid</th><th class="num chain-put-bg">Ask</th></tr>
+      </thead><tbody id="chainBody"><tr><td colspan="11"><div class="empty-state"><div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="empty-title">No chain loaded</div><div class="empty-sub">Enter a ticker and click "Load Chain"</div></div></td></tr></tbody></table>
     </div>
-    <div class="loading-overlay" id="chainLoading" style="display:none">
-      <div class="spinner"></div>
-      <div class="loading-text">Loading chain…</div>
-    </div>
+    <div class="loading-overlay" id="chainLoading" style="display:none"><div class="spinner"></div><div class="loading-text">Loading chain…</div></div>
   </div>
-
-  <div class="card" style="margin-top:14px">
-    <div class="card-header"><span>IV Smile</span></div>
-    <div class="card-body"><div class="chart-box"><canvas id="chartSmile"></canvas></div></div>
-  </div>
+  <div class="card" style="margin-top:16px"><div class="card-header"><span>IV Smile</span></div><div class="card-body"><div class="chart-box"><canvas id="chartSmile"></canvas></div></div></div>
 </div>
 
-</div><!-- /content -->
-</div><!-- /main -->
-</div><!-- /shell -->
-
+</div></div></div>
 <div class="toast-container" id="toasts"></div>
 
 <script>
-/* ══════════════════════════════════════════════════════════
-   VŌLATILITY — Options Anomaly Scanner
-   Premium UI (Theme-ready)
-   Keeps your original logic & endpoints. :contentReference[oaicite:2]{index=2}
-   ══════════════════════════════════════════════════════════ */
-
-// ── GLOBALS ─────────────────────────────────────────────
-let scanData = [];  // last scan results
-let chartInstances = {};
-
-// ── UTILITIES ───────────────────────────────────────────
-const $ = id => document.getElementById(id);
-const fx = (v, d=2) => v == null ? '—' : Number(v).toFixed(d);
-const pct = (v, d=1) => v == null ? '—' : (Number(v)*100).toFixed(d) + '%';
-
-function toast(msg, type='info') {
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.textContent = msg;
-  $('toasts').appendChild(el);
-  setTimeout(() => el.remove(), 4200);
-}
-
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn[data-page]').forEach(b => b.classList.remove('active'));
-  const page = $('page-' + name);
-  if (page) page.classList.add('active');
-  const btn = document.querySelector(`.nav-btn[data-page="${name}"]`);
-  if (btn) btn.classList.add('active');
-}
-
-function updateClock() {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  const s = String(now.getSeconds()).padStart(2,'0');
-  $('clock').textContent = `${h}:${m}:${s}`;
-}
-setInterval(updateClock, 1000); updateClock();
-
-/* ── THEME ─────────────────────────────────────────────── */
-function getStoredTheme(){
-  try { return localStorage.getItem('vol_theme'); } catch { return null; }
-}
-function setStoredTheme(v){
-  try { localStorage.setItem('vol_theme', v); } catch {}
-}
-function applyTheme(theme){
-  if (theme === 'light') document.body.setAttribute('data-theme','light');
-  else document.body.removeAttribute('data-theme');
-  setStoredTheme(theme);
-  // Re-render charts to match tick/grid colors
-  rerenderActiveCharts();
-}
-function toggleTheme(){
-  const isLight = document.body.getAttribute('data-theme') === 'light';
-  applyTheme(isLight ? 'dark' : 'light');
-}
-function initTheme(){
-  const saved = getStoredTheme();
-  if (saved === 'light') applyTheme('light');
-  else applyTheme('dark');
-}
-initTheme();
-
-$('themeSwitch').addEventListener('click', toggleTheme);
-$('themeSwitch').addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); toggleTheme(); }});
-
-/* chart theming helpers */
-function cssVar(name){
-  return getComputedStyle(document.body).getPropertyValue(name).trim();
-}
-function chartCommonOptions() {
-  return {
-    responsive:true,
-    maintainAspectRatio:false,
-    plugins:{ legend:{ labels:{ color: cssVar('--text-2'), font:{ family: cssVar('--mono') || 'JetBrains Mono', size: 11 } } } },
-    scales:{
-      y:{ ticks:{ color: cssVar('--chart-tick') }, grid:{ color: cssVar('--chart-grid') } },
-      x:{ ticks:{ color: cssVar('--chart-tick') }, grid:{ display:false } }
-    }
-  };
-}
-function rerenderActiveCharts(){
-  // if already rendered with data, we can safely destroy and re-render with last known values
-  // For ivRv and smile we will re-render when needed. For now, refresh tick colors only by recreating if exists:
-  if (chartInstances.ivRv && chartInstances._lastIvRv) {
-    const {iv, rv} = chartInstances._lastIvRv;
-    renderIvRvChart(iv, rv);
-  }
-  if (chartInstances.smile && chartInstances._lastSmile) {
-    const {data, spot} = chartInstances._lastSmile;
-    renderSmileChart(data, spot);
-  }
-  if (chartInstances.price && chartInstances._lastPrice) {
-    const {ticker} = chartInstances._lastPrice;
-    renderPriceChart(ticker);
-  }
-}
-
-// ── API HELPERS ─────────────────────────────────────────
-async function apiGet(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
-}
-async function apiPost(url) {
-  const r = await fetch(url, {method:'POST'});
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
-}
-
-// ── HEALTH CHECK ────────────────────────────────────────
-async function checkHealth() {
-  try {
-    await apiGet('/api/health');
-    $('statusDot').classList.remove('offline');
-    $('statusDot').title = 'API Online';
-  } catch {
-    $('statusDot').classList.add('offline');
-    $('statusDot').title = 'API Offline';
-  }
-}
-checkHealth();
-setInterval(checkHealth, 30000);
-
-// ══════════════════════════════════════════════════════════
-//  SCORE HELPERS (same semantics as your original) :contentReference[oaicite:3]{index=3}
-// ══════════════════════════════════════════════════════════
-function scoreColor(score){
-  if (score == null) return 'var(--text-2)';
-  if (score >= 80) return 'var(--red)';
-  if (score >= 65) return 'var(--amber)';
-  if (score >= 45) return 'var(--text-1)';
-  return 'var(--green)';
-}
-function scoreBarHTML(score){
-  const s = score == null ? 0 : Math.max(0, Math.min(100, score));
-  const col = scoreColor(score);
-  return `
-    <div class="scorebar">
-      <div class="score-track">
-        <div class="score-fill" style="width:${s}%;background:${col}"></div>
-      </div>
-      <div class="score-num">${score != null ? score.toFixed(0) : '—'}</div>
-    </div>
-  `;
-}
-function signalLabel(score){
-  if (score == null) return '<span style="color:var(--text-2)">—</span>';
-  if (score >= 80) return '<span style="color:var(--red);font-weight:700">● SELL VOL</span>';
-  if (score >= 65) return '<span style="color:var(--amber);font-weight:700">● RICH</span>';
-  if (score >= 45) return '<span style="color:var(--text-1)">◑ NEUTRAL</span>';
-  if (score >= 30) return '<span style="color:var(--cyan)">◐ CHEAP</span>';
-  return '<span style="color:var(--green);font-weight:700">● BUY VOL</span>';
-}
-function heatColor(score){
-  if (score == null) return 'var(--bg-3)';
-  if (score < 20) return '#0d47a1';
-  if (score < 35) return '#1a237e';
-  if (score < 45) return '#1c1f2e';
-  if (score < 55) return '#2c2216';
-  if (score < 65) return '#4e342e';
-  if (score < 80) return '#bf360c';
-  return '#d50000';
-}
-
-// ══════════════════════════════════════════════════════════
-//  SCANNER PAGE
-// ══════════════════════════════════════════════════════════
-async function runScan() {
-  const window_ = $('scanWindow').value;
-  const top_ = $('scanTop').value;
-  $('scanLoading').style.display = 'flex';
-  $('scanStatus').textContent = 'Scanning…';
-  $('scanBody').innerHTML = '';
-
-  try {
-    const data = await apiGet(`/api/scan/sp500?window=${window_}&top=${top_}`);
-    if (data.s !== 'ok') throw new Error(data.msg || 'Scan failed');
-
-    scanData = data.ranked || [];
-    renderScanTable();
-    renderHeatmap();
-    $('scanStatus').textContent = `${scanData.length} results · ${data.asof_date}`;
-    toast(`Scan complete: ${scanData.length} tickers`, 'success');
-  } catch (e) {
-    toast('Scan error: ' + e.message, 'error');
-    $('scanStatus').textContent = 'Error';
-  } finally {
-    $('scanLoading').style.display = 'none';
-  }
-}
-
-function renderScanTable() {
-  const filter = $('scanFilter').value;
-  let rows = [...scanData];
-  if (filter === 'overpriced') rows = rows.filter(r => r.iv_gap != null && r.iv_gap > 0);
-  if (filter === 'underpriced') rows = rows.filter(r => r.iv_gap != null && r.iv_gap < 0);
-
-  $('scanCount').textContent = rows.length + ' results';
-  const body = $('scanBody');
-  body.innerHTML = '';
-
-  rows.forEach((r, i) => {
-    const tr = document.createElement('tr');
-    const gapClass = r.iv_gap == null ? '' : r.iv_gap > 0 ? 'pos' : 'neg';
-    tr.innerHTML = `
-      <td style="color:var(--text-3)">${i+1}</td>
-      <td class="ticker-cell" onclick="openDetail('${r.ticker}')">${r.ticker}</td>
-      <td class="num">${fx(r.spot)}</td>
-      <td class="num">${pct(r.iv)}</td>
-      <td class="num">${pct(r.rv)}</td>
-      <td class="num ${gapClass}">${r.iv_gap != null ? (r.iv_gap > 0 ? '+' : '') + (r.iv_gap*100).toFixed(1) + 'pp' : '—'}</td>
-      <td>${scoreBarHTML(r.score)}</td>
-      <td style="color:var(--text-2)">${r.expiry || '—'}</td>
-      <td class="num">${fx(r.atm_strike)}</td>
-      <td>${signalLabel(r.score)}</td>
-    `;
-    body.appendChild(tr);
-  });
-}
-
-// Filter change re-render
-$('scanFilter').addEventListener('change', renderScanTable);
-
-// ══════════════════════════════════════════════════════════
-//  HEATMAP PAGE
-// ══════════════════════════════════════════════════════════
-function renderHeatmap() {
-  const grid = $('heatmapGrid');
-  grid.innerHTML = '';
-  $('hmCount').textContent = scanData.length;
-
-  scanData.forEach(r => {
-    const cell = document.createElement('div');
-    cell.className = 'hm-cell';
-    cell.style.background = heatColor(r.score);
-    cell.style.color = r.score != null && r.score > 55 ? '#fff' : 'var(--text-1)';
-    cell.innerHTML = `<div class="hm-ticker">${r.ticker}</div><div class="hm-score">${r.score != null ? r.score.toFixed(0) : '—'}</div>`;
-    cell.onclick = () => openDetail(r.ticker);
-    grid.appendChild(cell);
-  });
-}
-
-// ══════════════════════════════════════════════════════════
-//  DETAIL PAGE
-// ══════════════════════════════════════════════════════════
-function openDetail(ticker) {
-  $('detailTicker').value = ticker;
-  showPage('detail');
-  loadDetail();
-}
-
-async function loadDetail() {
-  const ticker = $('detailTicker').value.trim().toUpperCase();
-  if (!ticker) return;
-  $('detailStatus').innerHTML = '<span class="spinner"></span> Loading…';
-
-  try {
-    // Find in scan data first
-    const fromScan = scanData.find(r => r.ticker === ticker);
-
-    // Fetch spot price
-    let spot = fromScan?.spot;
-    try {
-      const priceData = await apiGet(`/api/stocks/price?ticker=${ticker}`);
-      if (priceData.s === 'ok') spot = priceData.mid;
-    } catch {}
-
-    // Use scan data or fetch fresh
-    let iv = fromScan?.iv;
-    let rv = fromScan?.rv;
-    let gap = fromScan?.iv_gap;
-    let score = fromScan?.score;
-    let expiry = fromScan?.expiry;
-
-    // Update stat boxes
-    $('dSpot').textContent = spot != null ? '$' + fx(spot) : '—';
-    $('dIV').textContent = pct(iv);
-    $('dExpiry').textContent = expiry || '';
-    $('dRV').textContent = pct(rv);
-    $('dGap').textContent = gap != null ? (gap > 0 ? '+' : '') + (gap*100).toFixed(1) + 'pp' : '—';
-    $('dGap').style.color = gap == null ? 'var(--text-2)' : gap > 0 ? 'var(--red)' : 'var(--green)';
-    $('dScore').textContent = score != null ? score.toFixed(0) : '—';
-    $('dScore').style.color = scoreColor(score);
-    $('dSignal').innerHTML = signalLabel(score);
-
-    // IV vs RV bar chart
-    renderIvRvChart(iv, rv);
-
-    // Price chart placeholder (keeps your behavior)
-    renderPriceChart(ticker);
-
-    $('detailStatus').textContent = '';
-  } catch (e) {
-    $('detailStatus').textContent = 'Error: ' + e.message;
-    toast('Detail error: ' + e.message, 'error');
-  }
-}
-
-function renderIvRvChart(iv, rv) {
-  if (chartInstances.ivRv) chartInstances.ivRv.destroy();
-  const ctx = $('chartIvRv').getContext('2d');
-
-  const accent = cssVar('--accent') || '#4f8cff';
-  const cyan = cssVar('--cyan') || '#4de1ff';
-  const grid = cssVar('--chart-grid');
-  const tick = cssVar('--chart-tick');
-
-  chartInstances.ivRv = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['ATM IV', 'Realized Vol'],
-      datasets: [{
-        data: [iv ? iv*100 : 0, rv ? rv*100 : 0],
-        backgroundColor: [colorMix(accent, .22), colorMix(cyan, .22)],
-        borderColor: [accent, cyan],
-        borderWidth: 1,
-        borderRadius: 6,
-        barPercentage: 0.5
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, ticks: { color: tick, callback: v => v + '%' }, grid: { color: grid } },
-        x: { ticks: { color: tick }, grid: { display: false } }
-      }
-    }
-  });
-
-  chartInstances._lastIvRv = {iv, rv};
-}
-
-function renderPriceChart(ticker) {
-  if (chartInstances.price) chartInstances.price.destroy();
-  const ctx = $('chartPrice').getContext('2d');
-
-  const amber = cssVar('--amber') || '#ffbf3c';
-  const grid = cssVar('--chart-grid');
-  const tick = cssVar('--chart-tick');
-
-  chartInstances.price = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [''],
-      datasets: [{
-        label: ticker + ' Close',
-        data: [],
-        borderColor: amber,
-        borderWidth: 1.5,
-        pointRadius: 0,
-        tension: 0.3,
-        fill: { target: 'origin', above: colorMix(amber, .10) }
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      scales: {
-        y: { ticks: { color: tick }, grid: { color: grid } },
-        x: { ticks: { color: tick, maxTicksLimit: 8 }, grid: { display: false } }
-      }
-    }
-  });
-
-  chartInstances._lastPrice = {ticker};
-  loadPriceHistory(ticker);
-}
-
-async function loadPriceHistory(ticker) {
-  // Placeholder per your original file (no endpoint yet). :contentReference[oaicite:4]{index=4}
-}
-
-// ══════════════════════════════════════════════════════════
-//  CHAIN PAGE
-// ══════════════════════════════════════════════════════════
-async function loadChainView() {
-  const ticker = $('chainTicker').value.trim().toUpperCase();
-  if (!ticker) return;
-
-  $('chainLoading').style.display = 'flex';
-  $('chainStatus').innerHTML = '<span class="spinner"></span> Loading…';
-  $('chainBody').innerHTML = '';
-
-  try {
-    // Get spot
-    const priceData = await apiGet(`/api/stocks/price?ticker=${ticker}`);
-    const spot = priceData.s === 'ok' ? priceData.mid : null;
-
-    // Get chain
-    const chainData = await apiGet(`/api/options/chain?ticker=${ticker}`);
-    if (chainData.s !== 'ok') throw new Error('No chain data');
-
-    const symbols = chainData.optionSymbol || chainData.optionSymbols || [];
-    if (!symbols.length) throw new Error('Empty chain');
-
-    // Parse symbols
-    const rangePct = parseFloat($('chainRange').value);
-    const maxQuotes = parseInt($('chainMax').value, 10);
-    const parsed = [];
-
-    for (const sym of symbols) {
-      const p = parseOCC(sym);
-      if (!p) continue;
-      parsed.push({ sym, ...p });
-    }
-
-    // Find nearest expiry
-    const expiries = [...new Set(parsed.map(p => p.expiry))].sort();
-    const nearest = expiries[0];
-
-    // filter to nearest expiry
-    const nearestSyms = parsed.filter(p => p.expiry === nearest);
-
-    // Filter strikes near spot
-    const strikes = [...new Set(nearestSyms.map(p => p.strike))].sort((a,b)=>a-b);
-    const minS = spot ? spot*(1-rangePct) : strikes[0];
-    const maxS = spot ? spot*(1+rangePct) : strikes[strikes.length-1];
-    const filteredStrikes = strikes.filter(s => s >= minS && s <= maxS);
-
-    // Build list of option symbols we want quotes for
-    const wanted = nearestSyms
-      .filter(p => filteredStrikes.includes(p.strike))
-      .map(p => p.sym);
-
-    // limit quotes
-    const limited = wanted.slice(0, maxQuotes);
-
-    // Batch quotes (your endpoint)
-    const qb = await apiGet(`/api/options/quotes_batch?symbols=${encodeURIComponent(limited.join(','))}&limit=${maxQuotes}`);
-    const qmap = qb.s === 'ok' ? qb.quotes : {};
-    const smileData = { strikes: [], callIV: [], putIV: [] };
-
-    // Build per strike rows
-    const body = $('chainBody');
-    body.innerHTML = '';
-
-    // helper to extract first numeric
-    const bidOf = (q)=>arrFirst(q?.bid);
-    const askOf = (q)=>arrFirst(q?.ask);
-    const midOf = (q)=>arrFirst(q?.mid);
-    const ivOf  = (q)=>arrFirst(q?.iv);
-    const dOf   = (q)=>arrFirst(q?.delta);
-
-    // find atm strike
-    const atmStrike = spot && filteredStrikes.length
-      ? filteredStrikes.reduce((a,b)=>Math.abs(b-spot)<Math.abs(a-spot)?b:a, filteredStrikes[0])
-      : filteredStrikes[Math.floor(filteredStrikes.length/2)];
-
-    filteredStrikes.forEach(strike=>{
-      const call = nearestSyms.find(p=>p.strike===strike && p.cp==='C');
-      const put  = nearestSyms.find(p=>p.strike===strike && p.cp==='P');
-      const qc = call ? qmap[call.sym] : null;
-      const qp = put  ? qmap[put.sym]  : null;
-
-      const tr = document.createElement('tr');
-      if (strike === atmStrike) tr.classList.add('atm-row');
-
-      tr.innerHTML = `
-        <td class="num chain-call-bg">${fx(bidOf(qc))}</td>
-        <td class="num chain-call-bg">${fx(midOf(qc))}</td>
-        <td class="num chain-call-bg">${fx(askOf(qc))}</td>
-        <td class="num chain-call-bg">${pct(ivOf(qc))}</td>
-        <td class="num chain-call-bg">${fx(dOf(qc),2)}</td>
-
-        <td class="chain-strike-col">${fx(strike,0)}</td>
-
-        <td class="num chain-put-bg">${fx(dOf(qp),2)}</td>
-        <td class="num chain-put-bg">${pct(ivOf(qp))}</td>
-        <td class="num chain-put-bg">${fx(bidOf(qp))}</td>
-        <td class="num chain-put-bg">${fx(midOf(qp))}</td>
-        <td class="num chain-put-bg">${fx(askOf(qp))}</td>
-      `;
-      body.appendChild(tr);
-
-      // collect smile points
-      const civ = ivOf(qc);
-      const piv = ivOf(qp);
-      if (civ != null || piv != null) {
-        smileData.strikes.push(strike);
-        smileData.callIV.push(civ != null ? civ*100 : null);
-        smileData.putIV.push(piv != null ? piv*100 : null);
-      }
-    });
-
-    $('chainMeta').textContent = `${ticker} · ${nearest} · Spot ${spot != null ? '$'+fx(spot) : '?'}`;
-    $('chainStatus').textContent = '';
-
-    renderSmileChart(smileData, spot);
-
-  } catch (e) {
-    $('chainStatus').textContent = 'Error: ' + e.message;
-    toast('Chain error: ' + e.message, 'error');
-  } finally {
-    $('chainLoading').style.display = 'none';
-  }
-}
-
-function renderSmileChart(data, spot) {
-  if (chartInstances.smile) chartInstances.smile.destroy();
-  const ctx = $('chartSmile').getContext('2d');
-
-  const green = cssVar('--green') || '#1fe6a8';
-  const red   = cssVar('--red') || '#ff4d6d';
-  const grid  = cssVar('--chart-grid');
-  const tick  = cssVar('--chart-tick');
-
-  const datasets = [
-    { label:'Call IV', data:data.callIV, borderColor:green, borderWidth:2, pointRadius:2, pointBackgroundColor:green, tension:0.25, spanGaps:true },
-    { label:'Put IV',  data:data.putIV,  borderColor:red,   borderWidth:2, pointRadius:2, pointBackgroundColor:red,   tension:0.25, spanGaps:true }
-  ];
-
-  chartInstances.smile = new Chart(ctx, {
-    type:'line',
-    data:{ labels: data.strikes.map(s => s.toFixed(0)), datasets },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ labels:{ color: tick, font:{ family: cssVar('--mono') || 'JetBrains Mono', size:11 } } } },
-      scales:{
-        y:{ ticks:{ color: tick, callback:v => (typeof v==='number'?v.toFixed(0):v) + '%' }, grid:{ color:grid },
-            title:{ display:true, text:'IV (%)', color: tick } },
-        x:{ ticks:{ color: tick, maxTicksLimit: 12 }, grid:{ display:false },
-            title:{ display:true, text:'Strike', color: tick } }
-      },
-      interaction:{ intersect:false, mode:'index' }
-    }
-  });
-
-  chartInstances._lastSmile = {data, spot};
-}
-
-// ── OCC SYMBOL PARSER ───────────────────────────────────
-function parseOCC(sym) {
-  if (!sym || sym.length < 15) return null;
-  const tail = sym.slice(-15);
-  const yymmdd = tail.slice(0, 6);
-  if (!/^\d{6}$/.test(yymmdd)) return null;
-  const cp = tail[6];
-  if (cp !== 'C' && cp !== 'P') return null;
-  const strike = parseInt(tail.slice(7), 10) / 1000;
-  const yy = parseInt(yymmdd.slice(0,2), 10);
-  const mm = parseInt(yymmdd.slice(2,4), 10);
-  const dd = parseInt(yymmdd.slice(4,6), 10);
-  const expiry = `${2000+yy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
-  return { expiry, cp, strike };
-}
-
-function arrFirst(arr) {
-  if (Array.isArray(arr) && arr.length > 0) {
-    const v = parseFloat(arr[0]);
-    return isNaN(v) ? null : v;
-  }
-  return null;
-}
-
-// small color mixer for chart fills
-function colorMix(hex, alpha){
-  // expects #RRGGBB
-  if (!hex || hex[0] !== '#' || hex.length < 7) return `rgba(79,140,255,${alpha||.12})`;
-  const r = parseInt(hex.slice(1,3),16);
-  const g = parseInt(hex.slice(3,5),16);
-  const b = parseInt(hex.slice(5,7),16);
-  return `rgba(${r},${g},${b},${alpha ?? .12})`;
-}
-
-// ══════════════════════════════════════════════════════════
-//  SIDEBAR ACTIONS
-// ══════════════════════════════════════════════════════════
-async function refreshUniverse() {
-  const btn = $('btnRefreshUniverse');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Refreshing…';
-  try {
-    const data = await apiPost('/api/universe/sp500/refresh');
-    toast(`Universe refreshed: ${data.count} tickers`, 'success');
-  } catch (e) {
-    toast('Refresh failed: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<span>↻</span> Refresh S&amp;P 500';
-  }
-}
-
-async function backfillRV() {
-  const btn = $('btnBackfill');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Backfilling…';
-  try {
-    const data = await apiPost('/api/history/backfill_realized?window=30&limit=0');
-    toast(`RV backfill: ${data.done} done, ${data.failed?.length || 0} failed`, data.failed?.length ? 'info' : 'success');
-  } catch (e) {
-    toast('Backfill failed: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<span>▶</span> Backfill RV';
-  }
-}
-
-// ══════════════════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════════════════
-(async () => {
-  try {
-    const data = await apiGet('/api/scan/sp500?window=30&top=50');
-    if (data.s === 'ok' && data.ranked?.length) {
-      scanData = data.ranked;
-      renderScanTable();
-      renderHeatmap();
-      $('scanStatus').textContent = `${scanData.length} results · ${data.asof_date}`;
-    }
-  } catch {}
-})();
+let scanData=[],chartInstances={};
+const $=id=>document.getElementById(id);
+const fx=(v,d=2)=>v==null?'—':Number(v).toFixed(d);
+const pct=(v,d=1)=>v==null?'—':(Number(v)*100).toFixed(d)+'%';
+
+const SVG={
+  pulse:'<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+  grid:'<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
+  table:'<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',
+  refresh:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+  sync:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>',
+};
+
+function toast(msg,type='info'){const el=document.createElement('div');el.className='toast '+type;el.textContent=msg;$('toasts').appendChild(el);setTimeout(()=>el.remove(),4200);}
+function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-btn[data-page]').forEach(b=>b.classList.remove('active'));const page=$('page-'+name);if(page)page.classList.add('active');const btn=document.querySelector('.nav-btn[data-page="'+name+'"]');if(btn)btn.classList.add('active');}
+function updateClock(){const now=new Date();$('clock').textContent=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');}
+setInterval(updateClock,1000);updateClock();
+
+function getStoredTheme(){try{return localStorage.getItem('vol_theme')}catch{return null}}
+function setStoredTheme(v){try{localStorage.setItem('vol_theme',v)}catch{}}
+function applyTheme(t){if(t==='light')document.body.setAttribute('data-theme','light');else document.body.removeAttribute('data-theme');setStoredTheme(t);rerenderActiveCharts();}
+function toggleTheme(){applyTheme(document.body.getAttribute('data-theme')==='light'?'dark':'light');}
+(function(){applyTheme(getStoredTheme()==='light'?'light':'dark')})();
+$('themeSwitch').addEventListener('click',toggleTheme);
+$('themeSwitch').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleTheme();}});
+
+function cssVar(n){return getComputedStyle(document.body).getPropertyValue(n).trim();}
+function rerenderActiveCharts(){if(chartInstances.ivRv&&chartInstances._lastIvRv)renderIvRvChart(chartInstances._lastIvRv.iv,chartInstances._lastIvRv.rv);if(chartInstances.smile&&chartInstances._lastSmile)renderSmileChart(chartInstances._lastSmile.data,chartInstances._lastSmile.spot);if(chartInstances.price&&chartInstances._lastPrice)renderPriceChart(chartInstances._lastPrice.ticker);}
+async function apiGet(url){const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+async function apiPost(url){const r=await fetch(url,{method:'POST'});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+async function checkHealth(){try{await apiGet('/api/health');$('statusDot').classList.remove('offline');$('statusDot').title='API Online';}catch{$('statusDot').classList.add('offline');$('statusDot').title='API Offline';}}
+checkHealth();setInterval(checkHealth,30000);
+
+function scoreColor(s){if(s==null)return'var(--text-2)';if(s>=80)return'var(--red-text)';if(s>=65)return'var(--amber-text)';if(s>=45)return'var(--text-1)';return'var(--green-text)';}
+function scoreBarHTML(s){const v=s==null?0:Math.max(0,Math.min(100,s));return'<div class="scorebar"><div class="score-track"><div class="score-fill" style="width:'+v+'%;background:'+scoreColor(s)+'"></div></div><div class="score-num">'+(s!=null?s.toFixed(0):'—')+'</div></div>';}
+function signalLabel(s){if(s==null)return'<span style="color:var(--text-3)">—</span>';if(s>=80)return'<span style="color:var(--red-text);font-weight:600">SELL VOL</span>';if(s>=65)return'<span style="color:var(--amber-text);font-weight:600">RICH</span>';if(s>=45)return'<span style="color:var(--text-1)">NEUTRAL</span>';if(s>=30)return'<span style="color:var(--cyan)">CHEAP</span>';return'<span style="color:var(--green-text);font-weight:600">BUY VOL</span>';}
+function heatColor(s){if(s==null)return'var(--bg-3)';if(s<20)return'#2d4a6e';if(s<35)return'#2a3455';if(s<45)return'#1e2230';if(s<55)return'#2a2520';if(s<65)return'#3d3025';if(s<80)return'#6b3a30';return'#8a3232';}
+function colorMix(hex,a){if(!hex||hex[0]!=='#'||hex.length<7)return'rgba(104,137,196,'+(a||.10)+')';return'rgba('+parseInt(hex.slice(1,3),16)+','+parseInt(hex.slice(3,5),16)+','+parseInt(hex.slice(5,7),16)+','+(a!=null?a:.10)+')';}
+
+async function runScan(){const w=$('scanWindow').value,t=$('scanTop').value;$('scanLoading').style.display='flex';$('scanStatus').textContent='Scanning…';$('scanBody').innerHTML='';try{const d=await apiGet('/api/scan/sp500?window='+w+'&top='+t);if(d.s!=='ok')throw new Error(d.msg||'Scan failed');scanData=d.ranked||[];renderScanTable();renderHeatmap();$('scanStatus').textContent=scanData.length+' results · '+d.asof_date;toast('Scan complete: '+scanData.length+' tickers','success');}catch(e){toast('Scan error: '+e.message,'error');$('scanStatus').textContent='Error';}finally{$('scanLoading').style.display='none';}}
+
+function renderScanTable(){const f=$('scanFilter').value;let rows=[...scanData];if(f==='overpriced')rows=rows.filter(r=>r.iv_gap!=null&&r.iv_gap>0);if(f==='underpriced')rows=rows.filter(r=>r.iv_gap!=null&&r.iv_gap<0);$('scanCount').textContent=rows.length+' results';const body=$('scanBody');body.innerHTML='';if(!rows.length){body.innerHTML='<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">'+SVG.pulse+'</div><div class="empty-title">No results match your filter</div><div class="empty-sub">Try adjusting filter criteria or run a new scan</div></div></td></tr>';return;}rows.forEach((r,i)=>{const tr=document.createElement('tr');const gc=r.iv_gap==null?'':r.iv_gap>0?'pos':'neg';tr.innerHTML='<td style="color:var(--text-3)">'+(i+1)+'</td><td class="ticker-cell" onclick="openDetail(\''+r.ticker+'\')">'+r.ticker+'</td><td class="num">'+fx(r.spot)+'</td><td class="num">'+pct(r.iv)+'</td><td class="num">'+pct(r.rv)+'</td><td class="num '+gc+'">'+(r.iv_gap!=null?(r.iv_gap>0?'+':'')+(r.iv_gap*100).toFixed(1)+'pp':'—')+'</td><td>'+scoreBarHTML(r.score)+'</td><td style="color:var(--text-2)">'+(r.expiry||'—')+'</td><td class="num">'+fx(r.atm_strike)+'</td><td>'+signalLabel(r.score)+'</td>';body.appendChild(tr);});}
+$('scanFilter').addEventListener('change',renderScanTable);
+
+function renderHeatmap(){const g=$('heatmapGrid');g.innerHTML='';$('hmCount').textContent=scanData.length;if(!scanData.length){g.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">'+SVG.grid+'</div><div class="empty-title">No heatmap data</div><div class="empty-sub">Run a scan first to populate the heatmap</div></div>';return;}scanData.forEach(r=>{const c=document.createElement('div');c.className='hm-cell';c.style.background=heatColor(r.score);c.style.color=r.score!=null&&r.score>55?'#d4cfc7':'var(--text-1)';c.innerHTML='<div class="hm-ticker">'+r.ticker+'</div><div class="hm-score">'+(r.score!=null?r.score.toFixed(0):'—')+'</div>';c.onclick=()=>openDetail(r.ticker);g.appendChild(c);});}
+
+function openDetail(t){$('detailTicker').value=t;showPage('detail');loadDetail();}
+async function loadDetail(){const t=$('detailTicker').value.trim().toUpperCase();if(!t)return;$('detailStatus').innerHTML='<span class="spinner"></span> Loading…';try{const fs=scanData.find(r=>r.ticker===t);let spot=fs?.spot;try{const pd=await apiGet('/api/stocks/price?ticker='+t);if(pd.s==='ok')spot=pd.mid;}catch{}let iv=fs?.iv,rv=fs?.rv,gap=fs?.iv_gap,score=fs?.score,expiry=fs?.expiry;$('dSpot').textContent=spot!=null?'$'+fx(spot):'—';$('dIV').textContent=pct(iv);$('dExpiry').textContent=expiry||'';$('dRV').textContent=pct(rv);$('dGap').textContent=gap!=null?(gap>0?'+':'')+(gap*100).toFixed(1)+'pp':'—';$('dGap').style.color=gap==null?'var(--text-2)':gap>0?'var(--red-text)':'var(--green-text)';$('dScore').textContent=score!=null?score.toFixed(0):'—';$('dScore').style.color=scoreColor(score);$('dSignal').innerHTML=signalLabel(score);renderIvRvChart(iv,rv);renderPriceChart(t);$('detailStatus').textContent='';}catch(e){$('detailStatus').textContent='Error: '+e.message;toast('Detail error: '+e.message,'error');}}
+
+function renderIvRvChart(iv,rv){if(chartInstances.ivRv)chartInstances.ivRv.destroy();const ctx=$('chartIvRv').getContext('2d');const a=cssVar('--accent')||'#6889c4',c=cssVar('--cyan')||'#5a9ab5',g=cssVar('--chart-grid'),tk=cssVar('--chart-tick');chartInstances.ivRv=new Chart(ctx,{type:'bar',data:{labels:['ATM IV','Realized Vol'],datasets:[{data:[iv?iv*100:0,rv?rv*100:0],backgroundColor:[colorMix(a,.18),colorMix(c,.18)],borderColor:[a,c],borderWidth:1,borderRadius:4,barPercentage:0.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:tk,callback:v=>v+'%'},grid:{color:g}},x:{ticks:{color:tk},grid:{display:false}}}}});chartInstances._lastIvRv={iv,rv};}
+
+function renderPriceChart(ticker){if(chartInstances.price)chartInstances.price.destroy();const ctx=$('chartPrice').getContext('2d');const am=cssVar('--amber')||'#c49a4e',g=cssVar('--chart-grid'),tk=cssVar('--chart-tick');chartInstances.price=new Chart(ctx,{type:'line',data:{labels:[''],datasets:[{label:ticker+' Close',data:[],borderColor:am,borderWidth:1.5,pointRadius:0,tension:0.3,fill:{target:'origin',above:colorMix(am,.08)}}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{y:{ticks:{color:tk},grid:{color:g}},x:{ticks:{color:tk,maxTicksLimit:8},grid:{display:false}}}}});chartInstances._lastPrice={ticker};loadPriceHistory(ticker);}
+async function loadPriceHistory(t){}
+
+async function loadChainView(){const t=$('chainTicker').value.trim().toUpperCase();if(!t)return;$('chainLoading').style.display='flex';$('chainStatus').innerHTML='<span class="spinner"></span> Loading…';$('chainBody').innerHTML='';try{const pd=await apiGet('/api/stocks/price?ticker='+t);const spot=pd.s==='ok'?pd.mid:null;const cd=await apiGet('/api/options/chain?ticker='+t);if(cd.s!=='ok')throw new Error('No chain data');const syms=cd.optionSymbol||cd.optionSymbols||[];if(!syms.length)throw new Error('Empty chain');const rp=parseFloat($('chainRange').value),mq=parseInt($('chainMax').value,10);const parsed=[];for(const s of syms){const p=parseOCC(s);if(!p)continue;parsed.push({sym:s,...p});}const exps=[...new Set(parsed.map(p=>p.expiry))].sort();const near=exps[0];const ns=parsed.filter(p=>p.expiry===near);const strikes=[...new Set(ns.map(p=>p.strike))].sort((a,b)=>a-b);const mn=spot?spot*(1-rp):strikes[0],mx=spot?spot*(1+rp):strikes[strikes.length-1];const fs=strikes.filter(s=>s>=mn&&s<=mx);const wanted=ns.filter(p=>fs.includes(p.strike)).map(p=>p.sym).slice(0,mq);const qb=await apiGet('/api/options/quotes_batch?symbols='+encodeURIComponent(wanted.join(','))+'&limit='+mq);const qm=qb.s==='ok'?qb.quotes:{};const sd={strikes:[],callIV:[],putIV:[]};const body=$('chainBody');body.innerHTML='';const bOf=q=>af(q?.bid),aOf=q=>af(q?.ask),mOf=q=>af(q?.mid),iOf=q=>af(q?.iv),dOf=q=>af(q?.delta);const atm=spot&&fs.length?fs.reduce((a,b)=>Math.abs(b-spot)<Math.abs(a-spot)?b:a,fs[0]):fs[Math.floor(fs.length/2)];fs.forEach(strike=>{const call=ns.find(p=>p.strike===strike&&p.cp==='C');const put=ns.find(p=>p.strike===strike&&p.cp==='P');const qc=call?qm[call.sym]:null,qp=put?qm[put.sym]:null;const tr=document.createElement('tr');if(strike===atm)tr.classList.add('atm-row');tr.innerHTML='<td class="num chain-call-bg">'+fx(bOf(qc))+'</td><td class="num chain-call-bg">'+fx(mOf(qc))+'</td><td class="num chain-call-bg">'+fx(aOf(qc))+'</td><td class="num chain-call-bg">'+pct(iOf(qc))+'</td><td class="num chain-call-bg">'+fx(dOf(qc),2)+'</td><td class="chain-strike-col">'+fx(strike,0)+'</td><td class="num chain-put-bg">'+fx(dOf(qp),2)+'</td><td class="num chain-put-bg">'+pct(iOf(qp))+'</td><td class="num chain-put-bg">'+fx(bOf(qp))+'</td><td class="num chain-put-bg">'+fx(mOf(qp))+'</td><td class="num chain-put-bg">'+fx(aOf(qp))+'</td>';body.appendChild(tr);const ci=iOf(qc),pi=iOf(qp);if(ci!=null||pi!=null){sd.strikes.push(strike);sd.callIV.push(ci!=null?ci*100:null);sd.putIV.push(pi!=null?pi*100:null);}});$('chainMeta').textContent=t+' · '+near+' · Spot '+(spot!=null?'$'+fx(spot):'?');$('chainStatus').textContent='';renderSmileChart(sd,spot);}catch(e){$('chainStatus').textContent='Error: '+e.message;toast('Chain error: '+e.message,'error');}finally{$('chainLoading').style.display='none';}}
+
+function renderSmileChart(data,spot){if(chartInstances.smile)chartInstances.smile.destroy();const ctx=$('chartSmile').getContext('2d');const gr=cssVar('--green')||'#4faa86',rd=cssVar('--red')||'#c9545d',g=cssVar('--chart-grid'),tk=cssVar('--chart-tick');chartInstances.smile=new Chart(ctx,{type:'line',data:{labels:data.strikes.map(s=>s.toFixed(0)),datasets:[{label:'Call IV',data:data.callIV,borderColor:gr,borderWidth:1.5,pointRadius:2,pointBackgroundColor:gr,tension:0.25,spanGaps:true},{label:'Put IV',data:data.putIV,borderColor:rd,borderWidth:1.5,pointRadius:2,pointBackgroundColor:rd,tension:0.25,spanGaps:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tk,font:{family:cssVar('--mono')||'JetBrains Mono',size:11}}}},scales:{y:{ticks:{color:tk,callback:v=>(typeof v==='number'?v.toFixed(0):v)+'%'},grid:{color:g},title:{display:true,text:'IV (%)',color:tk}},x:{ticks:{color:tk,maxTicksLimit:12},grid:{display:false},title:{display:true,text:'Strike',color:tk}}},interaction:{intersect:false,mode:'index'}}});chartInstances._lastSmile={data,spot};}
+
+function parseOCC(sym){if(!sym||sym.length<15)return null;const tail=sym.slice(-15),yymmdd=tail.slice(0,6);if(!/^\d{6}$/.test(yymmdd))return null;const cp=tail[6];if(cp!=='C'&&cp!=='P')return null;const strike=parseInt(tail.slice(7),10)/1000;const yy=parseInt(yymmdd.slice(0,2),10),mm=parseInt(yymmdd.slice(2,4),10),dd=parseInt(yymmdd.slice(4,6),10);return{expiry:(2000+yy)+'-'+String(mm).padStart(2,'0')+'-'+String(dd).padStart(2,'0'),cp,strike};}
+function af(arr){if(Array.isArray(arr)&&arr.length>0){const v=parseFloat(arr[0]);return isNaN(v)?null:v;}return null;}
+
+async function refreshUniverse(){const b=$('btnRefreshUniverse');b.disabled=true;b.innerHTML='<span class="spinner"></span> Refreshing…';try{const d=await apiPost('/api/universe/sp500/refresh');toast('Universe refreshed: '+d.count+' tickers','success');}catch(e){toast('Refresh failed: '+e.message,'error');}finally{b.disabled=false;b.innerHTML='<span class="ico">'+SVG.refresh+'</span>Refresh S&amp;P 500';}}
+async function backfillRV(){const b=$('btnBackfill');b.disabled=true;b.innerHTML='<span class="spinner"></span> Backfilling…';try{const d=await apiPost('/api/history/backfill_realized?window=30&limit=0');toast('RV backfill: '+d.done+' done, '+(d.failed?.length||0)+' failed',d.failed?.length?'info':'success');}catch(e){toast('Backfill failed: '+e.message,'error');}finally{b.disabled=false;b.innerHTML='<span class="ico">'+SVG.sync+'</span>Backfill RV';}}
+
+(async()=>{try{const d=await apiGet('/api/scan/sp500?window=30&top=50');if(d.s==='ok'&&d.ranked?.length){scanData=d.ranked;renderScanTable();renderHeatmap();$('scanStatus').textContent=scanData.length+' results · '+d.asof_date;}}catch{}})();
 </script>
 </body>
 </html>
