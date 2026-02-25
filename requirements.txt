@@ -1,3 +1,1 @@
-requests
-python-dotenv
-psycopg2-binary
+  a n n o t a t e d - d o c = = 0 . 0 . 4   a n n o t a t e d - t y p e s = = 0 . 7 . 0   a n y i o = = 4 . 1 2 . 1   c e r t i f i = = 2 0 2 6 . 2 . 2 5   c h a r s e t - n o r m a l i z e r = = 3 . 4 . 4   c l i c k = = 8 . 3 . 1   c o l o r a m a = = 0 . 4 . 6   f a s t a p i = = 0 . 1 3 3 . 1   h 1 1 = = 0 . 1 6 . 0   i d n a = = 3 . 1 1   p y d a n t i c = = 2 . 1 2 . 5   p y d a n t i c _ c o r e = = 2 . 4 1 . 5   r e q u e s t s = = 2 . 3 2 . 5   s t a r l e t t e = = 0 . 5 2 . 1   t y p i n g - i n s p e c t i o n = = 0 . 4 . 2   t y p i n g _ e x t e n s i o n s = = 4 . 1 5 . 0   u r l l i b 3 = = 2 . 6 . 3   u v i c o r n = = 0 . 4 1 . 0  requests 
